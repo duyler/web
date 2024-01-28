@@ -15,10 +15,12 @@
     },
     "require": {
         "php": "^8.3",
-        "duyler/http": "dev-main",
+        "duyler/http": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "friendsofphp/php-cs-fixer": "^3.30",
+        "squizlabs/php_codesniffer": "^4.0"
     },
     "minimum-stability": "dev",
     "autoload": {
