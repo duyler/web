@@ -1,0 +1,34 @@
+{
+    "name": "duyler/web",
+    "type": "library",
+    "description": "Duyler web library",
+    "license": "MIT",
+    "keywords": [],
+    "authors": [
+        {
+            "name": "Mikhail Ilinsky",
+            "email": "mail@milinsky.ru"
+        }
+    ],
+    "support": {
+        "docs": "https://duyler.org/docs/web/"
+    },
+    "require": {
+        "php": "^8.3",
+        "duyler/http": "dev-main",
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Duyler\\Web\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Duyler\\Web\\Test\\": ["tests/"]
+        }
+    }
+}

@@ -1,0 +1,56 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Duyler\Web;
+
+use Duyler\EventBus\Dto\Context;
+use Duyler\Framework\Loader\LoaderServiceInterface;
+use Duyler\Framework\Loader\PackageLoaderInterface;
+use Duyler\Web\Build\Attribute\AttributeHandler;
+use Duyler\Web\Build\Controller;
+use Duyler\Web\Build\ControllerBuilder;
+use Duyler\Web\State\Action\RequestToActionStateHandler;
+use Duyler\Web\State\Action\ResultToResponseStateHandler;
+use Duyler\Web\State\Controller\PrepareControllerContractsStateHandler;
+use Duyler\Web\State\Controller\RunControllerStateHandler;
+use Override;
+use Psr\Container\ContainerInterface;
+
+class Loader implements PackageLoaderInterface
+{
+    public function __construct(
+        private ContainerInterface $container,
+    ) {}
+
+    #[Override]
+    public function load(LoaderServiceInterface $loaderService): void
+    {
+        $controllerBuilder = $this->container->get(ControllerBuilder::class);
+        $prepareController = $this->container->get(PrepareControllerContractsStateHandler::class);
+        $runController = $this->container->get(RunControllerStateHandler::class);
+        $requestToAction = $this->container->get(RequestToActionStateHandler::class);
+        $resultToResponse = $this->container->get(ResultToResponseStateHandler::class);
+        $routeAttributeHandler = $this->container->get(AttributeHandler::class);
+
+        new Controller($controllerBuilder);
+
+        $context = new Context(
+            [
+                PrepareControllerContractsStateHandler::class,
+                RunControllerStateHandler::class,
+                RequestToActionStateHandler::class,
+                ResultToResponseStateHandler::class
+            ]
+        );
+
+        $loaderService->addBuilder($controllerBuilder);
+        $loaderService->addAttributeHandler($routeAttributeHandler);
+        $loaderService->addStateContext($context);
+
+        $loaderService->addStateHandler($prepareController);
+        $loaderService->addStateHandler($runController);
+        $loaderService->addStateHandler($requestToAction);
+        $loaderService->addStateHandler($resultToResponse);
+    }
+}
