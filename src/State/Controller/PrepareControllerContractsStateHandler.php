@@ -11,7 +11,6 @@ use Duyler\Http\RequestProvider;
 use Duyler\Web\ControllerCollection;
 use InvalidArgumentException;
 use Override;
-use RuntimeException;
 
 class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInterface
 {
@@ -33,7 +32,7 @@ class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInt
 
         $doActions = [];
 
-        foreach ($controller->getContracts() as $actionId => $contract) {
+        foreach ($controller->getContracts() as $key => $contract) {
             $actions = $stateService->getByContract($contract);
 
             if (count($actions) === 0) {
@@ -41,11 +40,13 @@ class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInt
             }
 
             if (count($actions) > 1) {
-                if ($stateService->actionIsExists((string) $actionId) === false) {
-                    throw new RuntimeException('Action ' . $actionId . ' not found');
+                if ($stateService->actionIsExists((string) $key) === false) {
+                    throw new InvalidArgumentException(
+                        'Multiple contract implementations found, but action id for contract ' . $contract . ' not set'
+                    );
                 }
-                $stateService->doExistsAction($actionId);
-                $doActions[$contract] = $actionId;
+                $stateService->doExistsAction($key);
+                $doActions[$contract] = $key;
                 continue;
             }
 

@@ -37,10 +37,6 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
     #[Override]
     public function observed(StateContext $context): array
     {
-        if (null === $context->read('actionId')) {
-            return [];
-        }
-
         return [$context->read('actionId')];
     }
 }
