@@ -7,9 +7,9 @@ namespace Duyler\Web\State\Action;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
+use Duyler\Router\CurrentRoute;
 use InvalidArgumentException;
 use Override;
-use Psr\Http\Message\ServerRequestInterface;
 
 class RequestToActionStateHandler implements MainAfterStateHandlerInterface
 {
@@ -17,27 +17,25 @@ class RequestToActionStateHandler implements MainAfterStateHandlerInterface
     public function handle(StateMainAfterService $stateService, StateContext $context): void
     {
         /**
-         * @var ServerRequestInterface $request
+         * @var CurrentRoute $currentRoute
          */
-        $request = $stateService->getResultData();
+        $currentRoute = $stateService->getResultData();
 
-        $actionId = $request->getAttribute('action');
-
-        if (empty($actionId)) {
+        if (empty($currentRoute->action)) {
             return;
         }
 
-        if ($stateService->actionIsExists($actionId) === false) {
+        if ($stateService->actionIsExists($currentRoute->action) === false) {
             throw new InvalidArgumentException('Invalid action: ' . $actionId);
         }
 
-        $stateService->doExistsAction($actionId);
-        $context->write('actionId', $actionId);
+        $stateService->doExistsAction($currentRoute->action);
+        $context->write('actionId', $currentRoute->action);
     }
 
     #[Override]
     public function observed(StateContext $context): array
     {
-        return ['Http.CreateRequest'];
+        return ['Http.StartRouting'];
     }
 }
