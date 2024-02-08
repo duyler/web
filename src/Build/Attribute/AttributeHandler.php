@@ -31,7 +31,7 @@ class AttributeHandler implements AttributeHandlerInterface
 
     public function handleRoute(RouteAttribute $route, mixed $item): void
     {
-        $method = strtolower($route->method);
+        $method = strtolower($route->method->value);
         /** @var RouteDefinition $definition */
         $definition = Route::{$method}($route->pattern);
         $definition->handler($route->handler ?? $item->handler ?? null);
