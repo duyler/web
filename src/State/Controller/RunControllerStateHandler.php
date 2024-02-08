@@ -12,6 +12,7 @@ use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\TwigWrapper\TwigWrapper;
 use Duyler\Web\AbstractController;
+use Duyler\Web\ArgumentBuilder;
 use Duyler\Web\Build\Controller;
 use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
@@ -23,6 +24,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
     public function __construct(
         private ContainerInterface $container,
         private TwigWrapper $twigWrapper,
+        private ArgumentBuilder $argumentBuilder,
     ) {}
 
     #[Override]
@@ -35,15 +37,21 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             return;
         }
 
-        $doActions = $context->read('doActions');
-        $actions = [];
+        $argumentsData = [];
 
-        foreach ($doActions as $contract => $actionId) {
+        foreach ($context->read('doActions') as $contract => $actionId) {
             if ($stateService->resultIsExists($actionId) === false) {
                 return;
             }
-            $actions[$contract] = $actionId;
+
+            $result = $stateService->getResult($actionId);
+
+            if ($result->data !== null) {
+                $argumentsData[$contract] = $result->data;
+            }
         }
+
+        $arguments = $this->argumentBuilder->build($controllerData->handler, $argumentsData);
 
         $container = clone $this->container;
 
@@ -55,14 +63,6 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $controllerData->getProviders(),
         );
 
-        foreach ($actions as $contract => $actionId) {
-            $result = $stateService->getResult($actionId);
-            if ($result->data !== null) {
-                $container->bind([$contract => $actionId]);
-                $container->set($result->data);
-            }
-        }
-
         $controller = is_callable($controllerData->handler)
             ? $controllerData->handler
             : $container->get($controllerData->handler);
@@ -71,7 +71,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $controller->setRenderer($this->twigWrapper);
         }
 
-        $response = $controller();
+        $response = $controller(...$arguments);
 
         if ($response === null) {
             return;
