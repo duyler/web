@@ -15,7 +15,7 @@
     },
     "require": {
         "php": "^8.3",
-        "duyler/http": "*"
+        "duyler/http": "dev-main"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
