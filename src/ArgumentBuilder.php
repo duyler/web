@@ -28,6 +28,12 @@ class ArgumentBuilder
                 }
             }
 
+            if ($invoke === null) {
+                throw new InvalidArgumentException(
+                    'Handler class will be invokable. ' . 'Method "__invoke" not found in ' . $handler
+                );
+            }
+
             return $this->match($invoke, $arguments);
         }
 
