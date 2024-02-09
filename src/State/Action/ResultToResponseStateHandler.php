@@ -48,12 +48,13 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
         } elseif ($this->viewCollection->has($actionId)) {
             $actionView = $this->viewCollection->get($actionId);
 
-            if ($this->twigWrapper->exists($actionView->viewName) === false) {
-                throw new InvalidArgumentException("View {$actionView->viewName} not found");
+            $template = str_replace('.', DIRECTORY_SEPARATOR, $actionView->viewName);
+            if ($this->twigWrapper->exists($template) === false) {
+                throw new InvalidArgumentException("Template {$template} not found");
             }
 
             $this->twigWrapper->content([$actionView->dataKey => $responseData]);
-            $content = $this->twigWrapper->render($actionView->viewName);
+            $content = $this->twigWrapper->render($template);
             $stateService->doTrigger(
                 new Trigger(
                     id: 'Http.CreateResponse',
