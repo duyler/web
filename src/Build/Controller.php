@@ -39,7 +39,7 @@ class Controller
         return $controller;
     }
 
-    public function contracts(string ...$contracts): self
+    public function contracts(array $contracts): self
     {
         $this->contracts = $contracts;
         return $this;

@@ -31,7 +31,7 @@ class Loader implements PackageLoaderInterface
         $runController = $this->container->get(RunControllerStateHandler::class);
         $requestToAction = $this->container->get(RequestToActionStateHandler::class);
         $resultToResponse = $this->container->get(ResultToResponseStateHandler::class);
-        $routeAttributeHandler = $this->container->get(AttributeHandler::class);
+        $attributeHandler = $this->container->get(AttributeHandler::class);
 
         new Controller($controllerBuilder);
 
@@ -45,7 +45,7 @@ class Loader implements PackageLoaderInterface
         );
 
         $loaderService->addBuilder($controllerBuilder);
-        $loaderService->addAttributeHandler($routeAttributeHandler);
+        $loaderService->addAttributeHandler($attributeHandler);
         $loaderService->addStateContext($context);
 
         $loaderService->addStateHandler($prepareController);

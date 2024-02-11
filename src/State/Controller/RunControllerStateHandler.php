@@ -5,28 +5,30 @@ declare(strict_types=1);
 namespace Duyler\Web\State\Controller;
 
 use Duyler\DependencyInjection\ContainerInterface;
-use Duyler\EventBus\Contract\State\MainEndStateHandlerInterface;
-use Duyler\EventBus\State\Service\StateMainEndService;
+use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
+use Duyler\EventBus\Dto\Trigger;
+use Duyler\EventBus\Enum\ResultStatus;
+use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\ResponseTransmitter;
 use Duyler\TwigWrapper\TwigWrapper;
 use Duyler\Web\AbstractController;
+use Duyler\Web\ArgumentBuilder;
 use Duyler\Web\Build\Controller;
 use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
 use Override;
 use Psr\Http\Message\ResponseInterface;
 
-class RunControllerStateHandler implements MainEndStateHandlerInterface
+class RunControllerStateHandler implements MainAfterStateHandlerInterface
 {
     public function __construct(
         private ContainerInterface $container,
-        private ResponseTransmitter $responseTransmitter,
         private TwigWrapper $twigWrapper,
+        private ArgumentBuilder $argumentBuilder,
     ) {}
 
     #[Override]
-    public function handle(StateMainEndService $stateService, StateContext $context): void
+    public function handle(StateMainAfterService $stateService, StateContext $context): void
     {
         /** @var Controller $controllerData */
         $controllerData = $context->read('controller');
@@ -34,6 +36,22 @@ class RunControllerStateHandler implements MainEndStateHandlerInterface
         if ($controllerData === null) {
             return;
         }
+
+        $argumentsData = [];
+
+        foreach ($context->read('doActions') as $contract => $actionId) {
+            if ($stateService->resultIsExists($actionId) === false) {
+                return;
+            }
+
+            $result = $stateService->getResult($actionId);
+
+            if ($result->data !== null) {
+                $argumentsData[$contract] = $result->data;
+            }
+        }
+
+        $arguments = $this->argumentBuilder->build($controllerData->handler, $argumentsData);
 
         $container = clone $this->container;
 
@@ -45,29 +63,15 @@ class RunControllerStateHandler implements MainEndStateHandlerInterface
             $controllerData->getProviders(),
         );
 
-        $actions = $context->read('doActions');
+        $controller = is_callable($controllerData->handler)
+            ? $controllerData->handler
+            : $container->get($controllerData->handler);
 
-        foreach ($actions as $contract => $actionId) {
-            if ($stateService->resultIsExists($actionId)) {
-                $result = $stateService->getResult($actionId);
-                if ($result->data !== null) {
-                    $container->bind([$contract => $actionId]);
-                    $container->set($result->data);
-                }
-            }
-        }
-
-        if (is_callable($controllerData->handler)) {
-            $controller = $controllerData->handler;
-        } else {
-            $controller = $container->get($controllerData->handler);
-        }
-
-        if (is_a($controller, AbstractController::class)) {
+        if ($controller instanceof AbstractController) {
             $controller->setRenderer($this->twigWrapper);
         }
 
-        $response = $controller();
+        $response = $controller(...$arguments);
 
         if ($response === null) {
             return;
@@ -77,10 +81,23 @@ class RunControllerStateHandler implements MainEndStateHandlerInterface
             $response = new TextResponse($response);
         }
 
-        if (!is_a($response, ResponseInterface::class)) {
+        if ($response instanceof ResponseInterface === false) {
             throw new InvalidArgumentException('Response must be instance of "Psr\Http\Message\ResponseInterface"');
         }
 
-        $this->responseTransmitter->transmit($response);
+        $stateService->doTrigger(
+            new Trigger(
+                id: 'Http.CreateResponse',
+                status: ResultStatus::Success,
+                data: $response,
+                contract: ResponseInterface::class,
+            ),
+        );
+    }
+
+    #[Override]
+    public function observed(StateContext $context): array
+    {
+        return $context->read('doActions') ?? [];
     }
 }

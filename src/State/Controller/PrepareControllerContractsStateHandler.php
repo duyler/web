@@ -4,28 +4,27 @@ declare(strict_types=1);
 
 namespace Duyler\Web\State\Controller;
 
-use Duyler\EventBus\Contract\State\MainBeginStateHandlerInterface;
-use Duyler\EventBus\State\Service\StateMainBeginService;
+use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
+use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\RequestProvider;
+use Duyler\Router\CurrentRoute;
 use Duyler\Web\ControllerCollection;
 use InvalidArgumentException;
 use Override;
-use RuntimeException;
 
-class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInterface
+class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInterface
 {
     public function __construct(
         private ControllerCollection $controllerCollection,
-        private RequestProvider $requestProvider,
     ) {}
 
     #[Override]
-    public function handle(StateMainBeginService $stateService, StateContext $context): void
+    public function handle(StateMainAfterService $stateService, StateContext $context): void
     {
-        $target = $this->requestProvider->get()->getAttribute('target');
+        /** @var CurrentRoute $currentRoute */
+        $currentRoute = $stateService->getResultData();
 
-        $controller = $this->controllerCollection->get($target);
+        $controller = $this->controllerCollection->get($currentRoute->target);
 
         if ($controller === null) {
             return;
@@ -33,7 +32,7 @@ class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInt
 
         $doActions = [];
 
-        foreach ($controller->getContracts() as $actionId => $contract) {
+        foreach ($controller->getContracts() as $key => $contract) {
             $actions = $stateService->getByContract($contract);
 
             if (count($actions) === 0) {
@@ -41,11 +40,13 @@ class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInt
             }
 
             if (count($actions) > 1) {
-                if ($stateService->actionIsExists((string) $actionId) === false) {
-                    throw new RuntimeException('Action ' . $actionId . ' not found');
+                if ($stateService->actionIsExists((string) $key) === false) {
+                    throw new InvalidArgumentException(
+                        'Multiple contract implementations found, but action id for contract ' . $contract . ' not set'
+                    );
                 }
-                $stateService->doExistsAction($actionId);
-                $doActions[$contract] = $actionId;
+                $stateService->doExistsAction($key);
+                $doActions[$contract] = $key;
                 continue;
             }
 
@@ -57,5 +58,11 @@ class PrepareControllerContractsStateHandler implements MainBeginStateHandlerInt
 
         $context->write('controller', $controller);
         $context->write('doActions', $doActions);
+    }
+
+    #[Override]
+    public function observed(StateContext $context): array
+    {
+        return ['Http.StartRouting'];
     }
 }
