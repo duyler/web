@@ -9,6 +9,6 @@ readonly class ActionView
     public function __construct(
         public string $actionId,
         public string $viewName,
-        public string $dataKey,
+        public string|null $dataKey,
     ) {}
 }
