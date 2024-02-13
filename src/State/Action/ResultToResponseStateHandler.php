@@ -53,7 +53,10 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
                 throw new InvalidArgumentException("Template {$template} not found");
             }
 
-            $this->twigWrapper->content([$actionView->dataKey => $responseData]);
+            if ($actionView->dataKey !== null) {
+                $this->twigWrapper->content([$actionView->dataKey => $responseData]);
+            }
+
             $content = $this->twigWrapper->render($template);
             $stateService->doTrigger(
                 new Trigger(
