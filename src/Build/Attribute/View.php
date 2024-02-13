@@ -12,7 +12,7 @@ readonly class View implements AttributeInterface
 {
     public function __construct(
         public string $name,
-        public string $key,
+        public ?string $key = null,
     ) {}
 
     #[Override]
