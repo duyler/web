@@ -51,7 +51,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             }
         }
 
-        $arguments = $this->argumentBuilder->build($controllerData->handler, $argumentsData);
+        $arguments = $this->argumentBuilder->build($controllerData, $argumentsData);
 
         $container = clone $this->container;
 
@@ -71,7 +71,11 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $controller->setRenderer($this->twigWrapper);
         }
 
-        $response = $controller(...$arguments);
+        if ($controllerData->getMethod() === '__invoke') {
+            $response = $controller(...$arguments);
+        } else {
+            $response = $controller->{$controllerData->getmethod()}(...$arguments);
+        }
 
         if ($response === null) {
             return;

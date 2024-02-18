@@ -12,6 +12,7 @@ class Controller
     private static ControllerBuilder $builder;
     public readonly string|Closure $handler;
     public readonly string $target;
+    private string $method = '__invoke';
 
     /** @var array<string, string> */
     private array $bind = [];
@@ -30,11 +31,13 @@ class Controller
         static::$builder = $builder;
     }
 
-    public static function build(string|Closure $handler): static
+    public static function build(string|Closure $handler, string $method = null): static
     {
+        $method = $method ?? '__invoke';
         $controller = new self(static::$builder);
         $controller->handler = $handler;
-        $controller->target = is_object($handler) ? spl_object_hash($handler) : $handler;
+        $controller->target = is_object($handler) ? spl_object_hash($handler) : $handler . '@' . $method;
+        $controller->method = $method;
         static::$builder->addController($controller);
         return $controller;
     }
@@ -49,11 +52,6 @@ class Controller
     {
         $this->attributes = $attributes;
         return $this;
-    }
-
-    public function getHandler(): Closure|string
-    {
-        return $this->handler;
     }
 
     public function getProviders(): array
@@ -74,5 +72,10 @@ class Controller
     public function getAttributes(): array
     {
         return $this->attributes;
+    }
+
+    public function getMethod(): string
+    {
+        return $this->method;
     }
 }
