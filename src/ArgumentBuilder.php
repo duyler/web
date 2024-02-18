@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Duyler\Web;
 
-use Closure;
+use Duyler\Web\Build\Controller;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
@@ -16,28 +16,28 @@ class ArgumentBuilder
     /**
      * @throws ReflectionException
      */
-    public function build(Closure|string $handler, array $arguments = []): array
+    public function build(Controller $controller, array $arguments = []): array
     {
-        if (is_string($handler)) {
-            $reflection = new ReflectionClass($handler);
-            $invoke = null;
+        if (is_string($controller->handler)) {
+            $reflection = new ReflectionClass($controller->handler);
+            $methodReflection = null;
             foreach ($reflection->getMethods() as $method) {
-                if ($method->getName() === '__invoke') {
-                    $invoke = $method;
+                if ($method->getName() === $controller->getMethod()) {
+                    $methodReflection = $method;
                     break;
                 }
             }
 
-            if ($invoke === null) {
+            if ($methodReflection === null) {
                 throw new InvalidArgumentException(
-                    'Handler class will be invokable. ' . 'Method "__invoke" not found in ' . $handler
+                    'Method ' . $controller->getMethod() . ' not found in ' . $controller->handler
                 );
             }
 
-            return $this->match($invoke, $arguments);
+            return $this->match($methodReflection, $arguments);
         }
 
-        return $this->match(new ReflectionFunction($handler), $arguments);
+        return $this->match(new ReflectionFunction($controller->handler), $arguments);
     }
 
     protected function match(ReflectionFunctionAbstract $reflection, array $arguments = []): array
