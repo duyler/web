@@ -15,12 +15,13 @@ abstract class AbstractController
 {
     private TwigWrapper $twigWrapper;
 
+    // TODO refactor to with RendererInterface
     public function setRenderer(TwigWrapper $twigWrapper): void
     {
         $this->twigWrapper = $twigWrapper;
     }
 
-    protected function render(string $template, array $data): ResponseInterface
+    protected function render(string $template, array $data = []): ResponseInterface
     {
         $template = str_replace('.', DIRECTORY_SEPARATOR, $template);
         if ($this->twigWrapper->exists($template) === false) {
