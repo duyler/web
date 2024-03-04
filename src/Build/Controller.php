@@ -54,6 +54,18 @@ class Controller
         return $this;
     }
 
+    public function bind(array $bind): self
+    {
+        $this->bind = $bind;
+        return $this;
+    }
+
+    public function providers(array $providers): self
+    {
+        $this->providers = $providers;
+        return $this;
+    }
+
     public function getProviders(): array
     {
         return $this->providers;
