@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Duyler\Web\Test\Unit;
+
 use Duyler\Web\Build\Controller;
 use Duyler\Web\Build\ControllerBuilder;
 use PHPUnit\Framework\Attributes\Test;

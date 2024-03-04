@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace integration;
+namespace Duyler\Web\Test\Integration;
 
 use Duyler\Web\Build\Controller;
 use Duyler\Web\Build\ControllerBuilder;
