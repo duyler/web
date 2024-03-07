@@ -6,7 +6,6 @@ namespace Duyler\Web\State\Action;
 
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\Dto\Trigger;
-use Duyler\EventBus\Enum\ResultStatus;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\TwigWrapper\TwigWrapper;
@@ -40,7 +39,6 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
             $stateService->doTrigger(
                 new Trigger(
                     id: 'Http.CreateResponse',
-                    status: ResultStatus::Success,
                     data: $responseData,
                     contract: ResponseInterface::class,
                 ),
@@ -61,7 +59,6 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
             $stateService->doTrigger(
                 new Trigger(
                     id: 'Http.CreateResponse',
-                    status: ResultStatus::Success,
                     data: new HtmlResponse($content),
                     contract: ResponseInterface::class,
                 ),
@@ -70,7 +67,6 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
             $stateService->doTrigger(
                 new Trigger(
                     id: 'Http.CreateResponse',
-                    status: ResultStatus::Success,
                     data: new JsonResponse($responseData),
                     contract: ResponseInterface::class,
                 ),
