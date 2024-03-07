@@ -7,7 +7,6 @@ namespace Duyler\Web\State\Controller;
 use Duyler\DependencyInjection\ContainerInterface;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\Dto\Trigger;
-use Duyler\EventBus\Enum\ResultStatus;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\TwigWrapper\TwigWrapper;
@@ -92,7 +91,6 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
         $stateService->doTrigger(
             new Trigger(
                 id: 'Http.CreateResponse',
-                status: ResultStatus::Success,
                 data: $response,
                 contract: ResponseInterface::class,
             ),
