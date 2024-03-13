@@ -24,11 +24,11 @@ class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInt
         /** @var CurrentRoute $currentRoute */
         $currentRoute = $stateService->getResultData();
 
-        $controller = $this->controllerCollection->get($currentRoute->target);
-
-        if ($controller === null) {
+        if (null === $currentRoute->target) {
             return;
         }
+
+        $controller = $this->controllerCollection->get($currentRoute->target);
 
         $doActions = [];
 

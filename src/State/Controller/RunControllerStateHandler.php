@@ -7,6 +7,7 @@ namespace Duyler\Web\State\Controller;
 use Duyler\DependencyInjection\ContainerInterface;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\Dto\Trigger;
+use Duyler\EventBus\Enum\ResultStatus;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\TwigWrapper\TwigWrapper;
@@ -17,6 +18,7 @@ use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
 use Override;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 class RunControllerStateHandler implements MainAfterStateHandlerInterface
 {
@@ -44,6 +46,10 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             }
 
             $result = $stateService->getResult($actionId);
+
+            if (ResultStatus::Fail === $result->status) {
+                throw new RuntimeException('Contract ' . $contract . ' received with status "Fail"');
+            }
 
             if ($result->data !== null) {
                 $argumentsData[$contract] = $result->data;
