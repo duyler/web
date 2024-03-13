@@ -21,12 +21,12 @@ class RequestToActionStateHandler implements MainAfterStateHandlerInterface
          */
         $currentRoute = $stateService->getResultData();
 
-        if (empty($currentRoute->action)) {
+        if (null === $currentRoute->action) {
             return;
         }
 
         if ($stateService->actionIsExists($currentRoute->action) === false) {
-            throw new InvalidArgumentException('Invalid action: ' . $actionId);
+            throw new InvalidArgumentException('Invalid action: ' . $currentRoute->action);
         }
 
         $stateService->doExistsAction($currentRoute->action);
