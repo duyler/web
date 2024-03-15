@@ -24,10 +24,11 @@ abstract class AbstractController
     protected function render(string $template, array $data = []): ResponseInterface
     {
         $template = str_replace('.', DIRECTORY_SEPARATOR, $template);
-        if ($this->twigWrapper->exists($template) === false) {
+        if (false === $this->twigWrapper->exists($template)) {
             throw new InvalidArgumentException('Template not found: ' . $template);
         }
         $content = $this->twigWrapper->content($data)->render($template);
+
         return new HtmlResponse($content);
     }
 

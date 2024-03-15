@@ -29,7 +29,7 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
     {
         $actionId = $context->read('actionId');
 
-        if ($stateService->resultIsExists($actionId) === false) {
+        if (false === $stateService->resultIsExists($actionId)) {
             throw new LogicException('Result is not exists for action ' . $actionId);
         }
 
@@ -47,11 +47,11 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
             $actionView = $this->viewCollection->get($actionId);
 
             $template = str_replace('.', DIRECTORY_SEPARATOR, $actionView->viewName);
-            if ($this->twigWrapper->exists($template) === false) {
+            if (false === $this->twigWrapper->exists($template)) {
                 throw new InvalidArgumentException("Template {$template} not found");
             }
 
-            if ($actionView->dataKey !== null) {
+            if (null !== $actionView->dataKey) {
                 $this->twigWrapper->content([$actionView->dataKey => $responseData]);
             }
 

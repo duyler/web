@@ -8,7 +8,6 @@ use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\Router\CurrentRoute;
-use InvalidArgumentException;
 use Override;
 
 class RequestToActionStateHandler implements MainAfterStateHandlerInterface
@@ -21,16 +20,16 @@ class RequestToActionStateHandler implements MainAfterStateHandlerInterface
          */
         $currentRoute = $stateService->getResultData();
 
-        if (null === $currentRoute->action) {
+        if (null === $currentRoute->target) {
             return;
         }
 
-        if ($stateService->actionIsExists($currentRoute->action) === false) {
-            throw new InvalidArgumentException('Invalid action: ' . $currentRoute->action);
+        if (false === $stateService->actionIsExists($currentRoute->target)) {
+            return;
         }
 
-        $stateService->doExistsAction($currentRoute->action);
-        $context->write('actionId', $currentRoute->action);
+        $stateService->doExistsAction($currentRoute->target);
+        $context->write('actionId', $currentRoute->target);
     }
 
     #[Override]

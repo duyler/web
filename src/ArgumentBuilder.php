@@ -28,10 +28,8 @@ class ArgumentBuilder
                 }
             }
 
-            if ($methodReflection === null) {
-                throw new InvalidArgumentException(
-                    'Method ' . $controller->getMethod() . ' not found in ' . $controller->handler
-                );
+            if (null === $methodReflection) {
+                throw new InvalidArgumentException('Method ' . $controller->getMethod() . ' not found in ' . $controller->handler);
             }
 
             return $this->match($methodReflection, $arguments);

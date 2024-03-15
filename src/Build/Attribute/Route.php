@@ -15,17 +15,16 @@ readonly class Route implements AttributeInterface
     public function __construct(
         public Method $method,
         public string $pattern,
-        public string $name = '',
+        public ?string $name = null,
         public string|Closure|null $handler = null,
         public ?string $target = null,
-        public ?string $action = null,
         public array $where = [],
     ) {}
 
     #[Override]
     public function accept(AttributeHandlerInterface $handler, mixed $item): void
     {
-        /** @var AttributeHandler $handler */
+        /* @var AttributeHandler $handler */
         $handler->handleRoute($this, $item);
     }
 }
