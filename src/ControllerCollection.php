@@ -30,4 +30,9 @@ class ControllerCollection
     {
         return $this->controllers;
     }
+
+    public function has(string $target): bool
+    {
+        return isset($this->controllers[$target]);
+    }
 }

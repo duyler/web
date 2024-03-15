@@ -6,7 +6,7 @@ namespace Duyler\Web;
 
 class ViewCollection
 {
-    /** @var array<string, ActionView>  */
+    /** @var array<string, ActionView> */
     private array $views = [];
 
     public function add(ActionView $actionView): void
@@ -14,7 +14,7 @@ class ViewCollection
         $this->views[$actionView->actionId] = $actionView;
     }
 
-    public function get(string $actionId): ActionView|null
+    public function get(string $actionId): ?ActionView
     {
         return $this->views[$actionId] ?? null;
     }

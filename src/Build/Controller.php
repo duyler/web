@@ -31,7 +31,7 @@ class Controller
         static::$builder = $builder;
     }
 
-    public static function build(string|Closure $handler, string $method = null): static
+    public static function build(string|Closure $handler, ?string $method = null): static
     {
         $method = $method ?? '__invoke';
         $controller = new self(static::$builder);
@@ -39,30 +39,35 @@ class Controller
         $controller->target = is_object($handler) ? spl_object_hash($handler) : $handler . '@' . $method;
         $controller->method = $method;
         static::$builder->addController($controller);
+
         return $controller;
     }
 
     public function contracts(array $contracts): self
     {
         $this->contracts = $contracts;
+
         return $this;
     }
 
     public function attributes(AttributeInterface ...$attributes): self
     {
         $this->attributes = $attributes;
+
         return $this;
     }
 
     public function bind(array $bind): self
     {
         $this->bind = $bind;
+
         return $this;
     }
 
     public function providers(array $providers): self
     {
         $this->providers = $providers;
+
         return $this;
     }
 

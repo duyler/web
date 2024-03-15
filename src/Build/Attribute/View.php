@@ -12,13 +12,13 @@ readonly class View implements AttributeInterface
 {
     public function __construct(
         public string $name,
-        public string|null $key = null,
+        public ?string $key = null,
     ) {}
 
     #[Override]
     public function accept(AttributeHandlerInterface $handler, mixed $item): void
     {
-        /** @var AttributeHandler $handler */
+        /* @var AttributeHandler $handler */
         $handler->handleView($this, $item);
     }
 }

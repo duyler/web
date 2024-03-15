@@ -28,6 +28,10 @@ class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInt
             return;
         }
 
+        if (false === $this->controllerCollection->has($currentRoute->target)) {
+            return;
+        }
+
         $controller = $this->controllerCollection->get($currentRoute->target);
 
         $doActions = [];
@@ -35,12 +39,12 @@ class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInt
         foreach ($controller->getContracts() as $key => $contract) {
             $actions = $stateService->getByContract($contract);
 
-            if (count($actions) === 0) {
+            if (0 === count($actions)) {
                 throw new InvalidArgumentException('Action with contract ' . $contract . ' not found in the bus');
             }
 
             if (count($actions) > 1) {
-                if ($stateService->actionIsExists((string) $key) === false) {
+                if (false === $stateService->actionIsExists((string) $key)) {
                     throw new InvalidArgumentException(
                         'Multiple contract implementations found, but action id for contract ' . $contract . ' not set'
                     );

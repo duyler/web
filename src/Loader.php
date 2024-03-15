@@ -40,7 +40,7 @@ class Loader implements PackageLoaderInterface
                 PrepareControllerContractsStateHandler::class,
                 RunControllerStateHandler::class,
                 RequestToActionStateHandler::class,
-                ResultToResponseStateHandler::class
+                ResultToResponseStateHandler::class,
             ]
         );
 

@@ -34,18 +34,31 @@ class AttributeHandler implements AttributeHandlerInterface
         $method = strtolower($route->method->value);
         /** @var RouteDefinition $definition */
         $definition = Route::{$method}($route->pattern);
-        $definition->handler($route->handler ?? $item->handler ?? null);
-        $definition->name($route->name);
-        $definition->target($route->target ?? $item->target ?? $item::class);
-        $definition->action($item->id ?? $route->action ?? '');
+
+        if (null !== $item?->handler) {
+            $definition->handler($route->handler);
+        }
+
+        if (null !== $route->name) {
+            $definition->name($route->name);
+        }
+
         $definition->where($route->where);
+
+        $definition->target(
+            $item?->target
+                ?? $item?->id
+                ?? throw new InvalidArgumentException(
+                    'Target value for attribute "Route" not set'
+                )
+        );
     }
 
     public function handleView(View $view, mixed $item): void
     {
-        if ($item instanceof Action === false) {
+        if (false === $item instanceof Action) {
             throw new InvalidArgumentException(
-                'Target item for attribute "View" must be type of ' . Action::class . ', ' . $item::class . ' given',
+                'Target item for attribute "View" must be type of ' . Action::class . ', ' . $item::class . ' given'
             );
         }
 

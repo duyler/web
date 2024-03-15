@@ -34,14 +34,14 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
         /** @var Controller $controllerData */
         $controllerData = $context->read('controller');
 
-        if ($controllerData === null) {
+        if (null === $controllerData) {
             return;
         }
 
         $argumentsData = [];
 
         foreach ($context->read('doActions') as $contract => $actionId) {
-            if ($stateService->resultIsExists($actionId) === false) {
+            if (false === $stateService->resultIsExists($actionId)) {
                 return;
             }
 
@@ -51,7 +51,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
                 throw new RuntimeException('Contract ' . $contract . ' received with status "Fail"');
             }
 
-            if ($result->data !== null) {
+            if (null !== $result->data) {
                 $argumentsData[$contract] = $result->data;
             }
         }
@@ -76,13 +76,13 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $controller->setRenderer($this->twigWrapper);
         }
 
-        if ($controllerData->getMethod() === '__invoke') {
+        if ('__invoke' === $controllerData->getMethod()) {
             $response = $controller(...$arguments);
         } else {
             $response = $controller->{$controllerData->getmethod()}(...$arguments);
         }
 
-        if ($response === null) {
+        if (null === $response) {
             return;
         }
 
@@ -90,7 +90,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $response = new TextResponse($response);
         }
 
-        if ($response instanceof ResponseInterface === false) {
+        if (false === $response instanceof ResponseInterface) {
             throw new InvalidArgumentException('Response must be instance of "Psr\Http\Message\ResponseInterface"');
         }
 
