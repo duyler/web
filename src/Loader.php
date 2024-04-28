@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Duyler\Web;
 
-use Duyler\EventBus\Dto\Context;
+use Duyler\ActionBus\Dto\Context;
 use Duyler\Framework\Loader\LoaderServiceInterface;
 use Duyler\Framework\Loader\PackageLoaderInterface;
 use Duyler\Web\Build\Attribute\AttributeHandler;

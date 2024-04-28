@@ -15,6 +15,7 @@
     },
     "require": {
         "php": "^8.3",
+        "duyler/action-bus": "dev-main",
         "duyler/framework": "dev-main",
         "duyler/http": "dev-main",
         "duyler/twig-wrapper": "dev-main",
