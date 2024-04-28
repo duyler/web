@@ -49,8 +49,8 @@ class AttributeHandler implements AttributeHandlerInterface
             $item?->target
                 ?? $item?->id
                 ?? throw new InvalidArgumentException(
-                    'Target value for attribute "Route" not set'
-                )
+                    'Target value for attribute "Route" not set',
+                ),
         );
     }
 
@@ -58,14 +58,14 @@ class AttributeHandler implements AttributeHandlerInterface
     {
         if (false === $item instanceof Action) {
             throw new InvalidArgumentException(
-                'Target item for attribute "View" must be type of ' . Action::class . ', ' . $item::class . ' given'
+                'Target item for attribute "View" must be type of ' . Action::class . ', ' . $item::class . ' given',
             );
         }
 
         $this->viewCollection->add(new ActionView(
             actionId: $item->id,
             viewName: $view->name,
-            dataKey: $view->key
+            dataKey: $view->key,
         ));
     }
 }

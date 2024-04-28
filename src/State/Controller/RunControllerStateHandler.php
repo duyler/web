@@ -10,6 +10,7 @@ use Duyler\EventBus\Dto\Trigger;
 use Duyler\EventBus\Enum\ResultStatus;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
+use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
 use Duyler\Web\AbstractController;
 use Duyler\Web\ArgumentBuilder;
@@ -40,7 +41,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
 
         $argumentsData = [];
 
-        foreach ($context->read('doActions') as $contract => $actionId) {
+        foreach ($context->read('doActions') as $actionId) {
             if (false === $stateService->resultIsExists($actionId)) {
                 return;
             }
@@ -48,11 +49,12 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $result = $stateService->getResult($actionId);
 
             if (ResultStatus::Fail === $result->status) {
-                throw new RuntimeException('Contract ' . $contract . ' received with status "Fail"');
+                throw new RuntimeException('Action result ' . $actionId . ' received with status "Fail"');
             }
 
             if (null !== $result->data) {
-                $argumentsData[$contract] = $result->data;
+                $action = $stateService->getById($actionId);
+                $argumentsData[$action->contract] = $result->data;
             }
         }
 
@@ -96,7 +98,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
 
         $stateService->doTrigger(
             new Trigger(
-                id: 'Http.CreateResponse',
+                id: Http::CreateResponse,
                 data: $response,
                 contract: ResponseInterface::class,
             ),

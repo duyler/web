@@ -25,9 +25,9 @@ class ValidateControllerStateHandler implements MainEndStateHandlerInterface
 
         $actions = $context->read('doActions');
 
-        foreach ($actions as $contract => $actionId) {
+        foreach ($actions as $actionId) {
             if (false === $stateService->resultIsExists($actionId)) {
-                throw new RuntimeException('Contract ' . $contract . ' not received');
+                throw new RuntimeException('Action result for' . $actionId . ' not received');
             }
         }
     }
