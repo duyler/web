@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Duyler\Web\State\Controller;
 
-use Duyler\EventBus\Contract\State\MainEndStateHandlerInterface;
-use Duyler\EventBus\State\Service\StateMainEndService;
-use Duyler\EventBus\State\StateContext;
+use Duyler\ActionBus\Contract\State\MainEndStateHandlerInterface;
+use Duyler\ActionBus\State\Service\StateMainEndService;
+use Duyler\ActionBus\State\StateContext;
 use Duyler\Web\Build\Controller;
 use Override;
 use RuntimeException;

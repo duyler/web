@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Duyler\Web\Build;
 
 use Closure;
-use Duyler\EventBus\Formatter\IdFormatter;
+use Duyler\ActionBus\Formatter\IdFormatter;
 use Duyler\Framework\Build\AttributeInterface;
 use UnitEnum;
 
