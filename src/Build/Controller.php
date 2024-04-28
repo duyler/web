@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Duyler\Web\Build;
 
 use Closure;
+use Duyler\EventBus\Formatter\IdFormatter;
 use Duyler\Framework\Build\AttributeInterface;
+use UnitEnum;
 
 class Controller
 {
@@ -22,6 +24,9 @@ class Controller
 
     /** @var string[] */
     private array $contracts = [];
+
+    /** @var string[] */
+    private array $actions = [];
 
     /** @var AttributeInterface[] */
     private array $attributes = [];
@@ -43,10 +48,13 @@ class Controller
         return $controller;
     }
 
-    public function contracts(array $contracts): self
+    public function actions(string|UnitEnum ...$actions): self
     {
-        $this->contracts = $contracts;
+        foreach ($actions as $item) {
+            $this->actions[] = IdFormatter::format($item);
+        }
 
+        $this->actions = $actions;
         return $this;
     }
 
@@ -81,11 +89,6 @@ class Controller
         return $this->bind;
     }
 
-    public function getContracts(): array
-    {
-        return $this->contracts;
-    }
-
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -94,5 +97,10 @@ class Controller
     public function getMethod(): string
     {
         return $this->method;
+    }
+
+    public function getActions(): array
+    {
+        return $this->actions;
     }
 }

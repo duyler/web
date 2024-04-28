@@ -30,7 +30,7 @@ class ArgumentBuilder
 
             if (null === $methodReflection) {
                 throw new InvalidArgumentException(
-                    'Method ' . $controller->getMethod() . ' not found in ' . $controller->handler
+                    'Method ' . $controller->getMethod() . ' not found in ' . $controller->handler,
                 );
             }
 

@@ -8,6 +8,7 @@ use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\Dto\Trigger;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
+use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
 use Duyler\Web\ViewCollection;
 use HttpSoft\Response\HtmlResponse;
@@ -38,7 +39,7 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
         if ($responseData instanceof ResponseInterface) {
             $stateService->doTrigger(
                 new Trigger(
-                    id: 'Http.CreateResponse',
+                    id: Http::CreateResponse,
                     data: $responseData,
                     contract: ResponseInterface::class,
                 ),
@@ -58,7 +59,7 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
             $content = $this->twigWrapper->render($template);
             $stateService->doTrigger(
                 new Trigger(
-                    id: 'Http.CreateResponse',
+                    id: Http::CreateResponse,
                     data: new HtmlResponse($content),
                     contract: ResponseInterface::class,
                 ),
@@ -66,7 +67,7 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
         } else {
             $stateService->doTrigger(
                 new Trigger(
-                    id: 'Http.CreateResponse',
+                    id: Http::CreateResponse,
                     data: new JsonResponse($responseData),
                     contract: ResponseInterface::class,
                 ),
@@ -77,6 +78,6 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
     #[Override]
     public function observed(StateContext $context): array
     {
-        return [$context->read('actionId')];
+        return [$context->read('actionId') ?? ''];
     }
 }

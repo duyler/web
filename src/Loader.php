@@ -43,7 +43,7 @@ class Loader implements PackageLoaderInterface
                 RunControllerStateHandler::class,
                 RequestToActionStateHandler::class,
                 ResultToResponseStateHandler::class,
-            ]
+            ],
         );
 
         $loaderService->addBuilder($controllerBuilder);

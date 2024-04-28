@@ -7,9 +7,9 @@ namespace Duyler\Web\State\Controller;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
+use Duyler\Http\Http;
 use Duyler\Router\CurrentRoute;
 use Duyler\Web\ControllerCollection;
-use InvalidArgumentException;
 use Override;
 
 class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInterface
@@ -36,28 +36,11 @@ class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInt
 
         $doActions = [];
 
-        foreach ($controller->getContracts() as $key => $contract) {
-            $actions = $stateService->getByContract($contract);
-
-            if (0 === count($actions)) {
-                throw new InvalidArgumentException('Action with contract ' . $contract . ' not found in the bus');
+        foreach ($controller->getActions() as $actionId) {
+            if ($stateService->actionIsExists($actionId)) {
+                $stateService->doExistsAction($actionId);
+                $doActions[] = $actionId;
             }
-
-            if (count($actions) > 1) {
-                if (false === $stateService->actionIsExists((string) $key)) {
-                    throw new InvalidArgumentException(
-                        'Multiple contract implementations found, but action id for contract ' . $contract . ' not set'
-                    );
-                }
-                $stateService->doExistsAction($key);
-                $doActions[$contract] = $key;
-                continue;
-            }
-
-            $action = array_shift($actions);
-
-            $stateService->doExistsAction($action->id);
-            $doActions[$contract] = $action->id;
         }
 
         $context->write('controller', $controller);
@@ -67,6 +50,6 @@ class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInt
     #[Override]
     public function observed(StateContext $context): array
     {
-        return ['Http.StartRouting'];
+        return [Http::GetRoute];
     }
 }
