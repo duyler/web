@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Duyler\Web\Build;
 
 use Closure;
-use Duyler\ActionBus\Formatter\IdFormatter;
+use Duyler\ActionBus\Formatter\ActionIdFormatter;
 use Duyler\Framework\Build\AttributeInterface;
 use UnitEnum;
 
@@ -51,7 +51,7 @@ class Controller
     public function actions(string|UnitEnum ...$actions): self
     {
         foreach ($actions as $item) {
-            $this->actions[] = IdFormatter::format($item);
+            $this->actions[] = ActionIdFormatter::toString($item);
         }
 
         $this->actions = $actions;
