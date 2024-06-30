@@ -6,7 +6,7 @@ namespace Duyler\Web\State\Controller;
 
 use Duyler\DependencyInjection\ContainerInterface;
 use Duyler\ActionBus\Contract\State\MainAfterStateHandlerInterface;
-use Duyler\ActionBus\Dto\Trigger;
+use Duyler\ActionBus\Dto\Event;
 use Duyler\ActionBus\Enum\ResultStatus;
 use Duyler\ActionBus\State\Service\StateMainAfterService;
 use Duyler\ActionBus\State\StateContext;
@@ -96,11 +96,10 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             throw new InvalidArgumentException('Response must be instance of "Psr\Http\Message\ResponseInterface"');
         }
 
-        $stateService->doTrigger(
-            new Trigger(
+        $stateService->dispatchEvent(
+            new Event(
                 id: Http::CreateResponse,
                 data: $response,
-                contract: ResponseInterface::class,
             ),
         );
     }
