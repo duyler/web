@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Duyler\Web\State\Action;
 
 use Duyler\ActionBus\Contract\State\MainAfterStateHandlerInterface;
-use Duyler\ActionBus\Dto\Trigger;
+use Duyler\ActionBus\Dto\Event;
 use Duyler\ActionBus\State\Service\StateMainAfterService;
 use Duyler\ActionBus\State\StateContext;
 use Duyler\Http\Http;
@@ -37,11 +37,10 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
         $responseData = $stateService->getResult($actionId)->data;
 
         if ($responseData instanceof ResponseInterface) {
-            $stateService->doTrigger(
-                new Trigger(
+            $stateService->dispatchEvent(
+                new Event(
                     id: Http::CreateResponse,
                     data: $responseData,
-                    contract: ResponseInterface::class,
                 ),
             );
         } elseif ($this->viewCollection->has($actionId)) {
@@ -57,19 +56,17 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
             }
 
             $content = $this->twigWrapper->render($template);
-            $stateService->doTrigger(
-                new Trigger(
+            $stateService->dispatchEvent(
+                new Event(
                     id: Http::CreateResponse,
                     data: new HtmlResponse($content),
-                    contract: ResponseInterface::class,
                 ),
             );
         } else {
-            $stateService->doTrigger(
-                new Trigger(
+            $stateService->dispatchEvent(
+                new Event(
                     id: Http::CreateResponse,
                     data: new JsonResponse($responseData),
-                    contract: ResponseInterface::class,
                 ),
             );
         }
