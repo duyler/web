@@ -60,19 +60,17 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
 
         $arguments = $this->argumentBuilder->build($controllerData, $argumentsData);
 
-        $container = clone $this->container;
-
-        $container->bind(
+        $this->container->bind(
             $controllerData->getBind(),
         );
 
-        $container->addProviders(
+        $this->container->addProviders(
             $controllerData->getProviders(),
         );
 
         $controller = is_callable($controllerData->handler)
             ? $controllerData->handler
-            : $container->get($controllerData->handler);
+            : $this->container->get($controllerData->handler);
 
         if ($controller instanceof AbstractController) {
             $controller->setRenderer($this->twigWrapper);
