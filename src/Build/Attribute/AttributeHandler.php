@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Duyler\Web\Build\Attribute;
 
 use Duyler\ActionBus\Build\Action;
-use Duyler\Framework\Build\AttributeHandlerInterface;
+use Duyler\Builder\Build\AttributeHandlerInterface;
 use Duyler\Router\Route;
 use Duyler\Router\RouteDefinition;
 use Duyler\Web\ActionView;

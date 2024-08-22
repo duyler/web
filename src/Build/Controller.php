@@ -6,7 +6,7 @@ namespace Duyler\Web\Build;
 
 use Closure;
 use Duyler\ActionBus\Formatter\IdFormatter;
-use Duyler\Framework\Build\AttributeInterface;
+use Duyler\Builder\Build\AttributeInterface;
 use UnitEnum;
 
 class Controller

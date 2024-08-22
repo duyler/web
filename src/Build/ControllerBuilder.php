@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Duyler\Web\Build;
 
-use Duyler\Framework\Build\AttributeHandlerCollection;
-use Duyler\Framework\Build\BuilderInterface;
+use Duyler\Builder\Build\AttributeHandlerCollection;
+use Duyler\Builder\Build\BuilderInterface;
 use Duyler\Web\ControllerCollection;
 use Override;
 

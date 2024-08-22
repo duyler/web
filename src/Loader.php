@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Duyler\Web;
 
 use Duyler\ActionBus\Build\Context;
-use Duyler\Framework\Loader\LoaderServiceInterface;
-use Duyler\Framework\Loader\PackageLoaderInterface;
+use Duyler\Builder\Loader\LoaderServiceInterface;
+use Duyler\Builder\Loader\PackageLoaderInterface;
 use Duyler\Web\Build\Attribute\AttributeHandler;
 use Duyler\Web\Build\Controller;
 use Duyler\Web\Build\ControllerBuilder;
