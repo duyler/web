@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Duyler\Web\State\Action;
 
-use Duyler\ActionBus\Contract\State\MainAfterStateHandlerInterface;
-use Duyler\ActionBus\Dto\Event;
-use Duyler\ActionBus\State\Service\StateMainAfterService;
-use Duyler\ActionBus\State\StateContext;
+use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
+use Duyler\EventBus\Dto\Event;
+use Duyler\EventBus\State\Service\StateMainAfterService;
+use Duyler\EventBus\State\StateContext;
 use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
 use Duyler\Web\ViewCollection;

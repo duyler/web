@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Duyler\Web\Build\Attribute;
 
-use Duyler\ActionBus\Build\Action;
+use Duyler\EventBus\Build\Action;
 use Duyler\Builder\Build\AttributeHandlerInterface;
 use Duyler\Router\Route;
 use Duyler\Router\RouteDefinition;
