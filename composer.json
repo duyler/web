@@ -11,11 +11,11 @@
         }
     ],
     "support": {
-        "docs": "https://duyler.org/docs/web/"
+        "docs": "https://duyler.org/en/docs/web/"
     },
     "require": {
         "php": "^8.3",
-        "duyler/action-bus": "dev-main",
+        "duyler/event-bus": "dev-main",
         "duyler/builder": "dev-main",
         "duyler/http": "dev-main",
         "duyler/twig-wrapper": "dev-main",
