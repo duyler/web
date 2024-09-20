@@ -4,21 +4,30 @@ declare(strict_types=1);
 
 namespace Duyler\Web;
 
+use Duyler\EventBus\Dto\Event as EventDto;
+use Duyler\EventBus\Dto\Result;
 use Duyler\TwigWrapper\TwigWrapper;
 use HttpSoft\Response\HtmlResponse;
 use HttpSoft\Response\JsonResponse;
 use HttpSoft\Response\RedirectResponse;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
+use UnitEnum;
 
-abstract class AbstractController
+abstract class BaseController
 {
     private TwigWrapper $twigWrapper;
+    private BusService $busService;
 
     // TODO refactor to with RendererInterface
     public function setRenderer(TwigWrapper $twigWrapper): void
     {
         $this->twigWrapper = $twigWrapper;
+    }
+
+    public function setBusService(BusService $busService): void
+    {
+        $this->busService = $busService;
     }
 
     protected function render(string $template, array $data = []): ResponseInterface
@@ -51,5 +60,20 @@ abstract class AbstractController
             $protocol,
             $reasonPhrase,
         );
+    }
+
+    protected function dispatchEvent(EventDto $event): void
+    {
+        $this->busService->dispatchEvent($event);
+    }
+
+    protected function getResult(string|UnitEnum $actionId): ?Result
+    {
+        return $this->busService->getResult($actionId);
+    }
+
+    protected function resultIsExists(string|UnitEnum $actionId): bool
+    {
+        return $this->busService->resultIsExists($actionId);
     }
 }

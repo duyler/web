@@ -30,6 +30,10 @@ class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
     {
         $actionId = $context->read('actionId');
 
+        if (null === $actionId) {
+            return;
+        }
+
         if (false === $stateService->resultIsExists($actionId)) {
             throw new LogicException('Result is not exists for action ' . $actionId);
         }

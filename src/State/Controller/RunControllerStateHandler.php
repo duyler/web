@@ -12,9 +12,10 @@ use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
-use Duyler\Web\AbstractController;
+use Duyler\Web\BaseController;
 use Duyler\Web\ArgumentBuilder;
 use Duyler\Web\Build\Controller;
+use Duyler\Web\BusService;
 use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
 use Override;
@@ -72,14 +73,15 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
             ? $controllerData->handler
             : $this->container->get($controllerData->handler);
 
-        if ($controller instanceof AbstractController) {
+        if ($controller instanceof BaseController) {
             $controller->setRenderer($this->twigWrapper);
+            $controller->setBusService(new BusService($stateService));
         }
 
         if ('__invoke' === $controllerData->getMethod()) {
             $response = $controller(...$arguments);
         } else {
-            $response = $controller->{$controllerData->getmethod()}(...$arguments);
+            $response = $controller->{$controllerData->getMethod()}(...$arguments);
         }
 
         if (null === $response) {
