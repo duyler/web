@@ -12,6 +12,7 @@ use Duyler\Web\Build\Controller;
 use Duyler\Web\Build\ControllerBuilder;
 use Duyler\Web\State\Action\RequestToActionStateHandler;
 use Duyler\Web\State\Action\ResultToResponseStateHandler;
+use Duyler\Web\State\Action\ResultToTemplateStateHandler;
 use Duyler\Web\State\Controller\PrepareControllerContractsStateHandler;
 use Duyler\Web\State\Controller\RunControllerStateHandler;
 use Duyler\Web\State\ResolveRouteStateHandler;
@@ -33,6 +34,7 @@ class Loader implements PackageLoaderInterface
         $requestToAction = $this->container->get(RequestToActionStateHandler::class);
         $resultToResponse = $this->container->get(ResultToResponseStateHandler::class);
         $resolveRoute = $this->container->get(ResolveRouteStateHandler::class);
+        $resultToTemplate = $this->container->get(ResultToTemplateStateHandler::class);
         $attributeHandler = $this->container->get(AttributeHandler::class);
 
         new Controller($controllerBuilder);
@@ -43,6 +45,7 @@ class Loader implements PackageLoaderInterface
                 RunControllerStateHandler::class,
                 RequestToActionStateHandler::class,
                 ResultToResponseStateHandler::class,
+                ResultToTemplateStateHandler::class,
             ],
         );
 
@@ -50,6 +53,7 @@ class Loader implements PackageLoaderInterface
         $loaderService->addAttributeHandler($attributeHandler);
         $loaderService->addStateContext($context);
 
+        $loaderService->addStateHandler($resultToTemplate);
         $loaderService->addStateHandler($prepareController);
         $loaderService->addStateHandler($runController);
         $loaderService->addStateHandler($requestToAction);

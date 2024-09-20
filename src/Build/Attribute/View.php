@@ -11,7 +11,7 @@ use Override;
 readonly class View implements AttributeInterface
 {
     public function __construct(
-        public string $name,
+        public ?string $name = null,
         public ?string $key = null,
     ) {}
 

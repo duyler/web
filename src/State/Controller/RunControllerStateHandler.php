@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Duyler\Web\State\Controller;
 
 use Duyler\DependencyInjection\ContainerInterface;
-use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
+use Duyler\EventBus\Contract\State\MainEmptyStateHandlerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\Enum\ResultStatus;
-use Duyler\EventBus\State\Service\StateMainAfterService;
+use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
@@ -21,7 +21,7 @@ use Override;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
-class RunControllerStateHandler implements MainAfterStateHandlerInterface
+class RunControllerStateHandler implements MainEmptyStateHandlerInterface
 {
     public function __construct(
         private ContainerInterface $container,
@@ -30,7 +30,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
     ) {}
 
     #[Override]
-    public function handle(StateMainAfterService $stateService, StateContext $context): void
+    public function handle(StateMainEmptyService $stateService, StateContext $context): void
     {
         /** @var Controller $controllerData */
         $controllerData = $context->read('controller');
@@ -100,11 +100,5 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
                 data: $response,
             ),
         );
-    }
-
-    #[Override]
-    public function observed(StateContext $context): array
-    {
-        return $context->read('doActions') ?? [];
     }
 }
