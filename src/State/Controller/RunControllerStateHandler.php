@@ -16,6 +16,7 @@ use Duyler\Web\BaseController;
 use Duyler\Web\ArgumentBuilder;
 use Duyler\Web\Build\Controller;
 use Duyler\Web\BusService;
+use Duyler\Web\Context;
 use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
 use Override;
@@ -59,8 +60,6 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
             }
         }
 
-        $arguments = $this->argumentBuilder->build($controllerData, $argumentsData);
-
         $this->container->bind(
             $controllerData->getBind(),
         );
@@ -69,19 +68,30 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
             $controllerData->getProviders(),
         );
 
-        $controller = is_callable($controllerData->handler)
-            ? $controllerData->handler
-            : $this->container->get($controllerData->handler);
-
-        if ($controller instanceof BaseController) {
-            $controller->setRenderer($this->twigWrapper);
-            $controller->setBusService(new BusService($stateService));
-        }
-
-        if ('__invoke' === $controllerData->getMethod()) {
-            $response = $controller(...$arguments);
+        if (is_callable($controllerData->handler)) {
+            $response = ($controllerData->handler)(
+                new Context(
+                    $this->twigWrapper,
+                    new BusService($stateService),
+                    $this->container,
+                    $argumentsData,
+                )
+            );
         } else {
-            $response = $controller->{$controllerData->getMethod()}(...$arguments);
+            $arguments = $this->argumentBuilder->build($controllerData, $argumentsData);
+
+            $controller = $this->container->get($controllerData->handler);
+
+            if ($controller instanceof BaseController) {
+                $controller->setRenderer($this->twigWrapper);
+                $controller->setBusService(new BusService($stateService));
+            }
+
+            if ('__invoke' === $controllerData->getMethod()) {
+                $response = $controller(...$arguments);
+            } else {
+                $response = $controller->{$controllerData->getMethod()}(...$arguments);
+            }
         }
 
         if (null === $response) {
