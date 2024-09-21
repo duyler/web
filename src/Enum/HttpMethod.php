@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Duyler\Web\Enum;
 
-enum Method: string
+enum HttpMethod: string
 {
     case Get = 'GET';
     case Post = 'POST';

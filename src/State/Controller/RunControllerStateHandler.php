@@ -5,23 +5,25 @@ declare(strict_types=1);
 namespace Duyler\Web\State\Controller;
 
 use Duyler\DependencyInjection\ContainerInterface;
-use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
+use Duyler\EventBus\Contract\State\MainEmptyStateHandlerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\Enum\ResultStatus;
-use Duyler\EventBus\State\Service\StateMainAfterService;
+use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
-use Duyler\Web\AbstractController;
+use Duyler\Web\BaseController;
 use Duyler\Web\ArgumentBuilder;
 use Duyler\Web\Build\Controller;
+use Duyler\Web\BusService;
+use Duyler\Web\Context;
 use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
 use Override;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
-class RunControllerStateHandler implements MainAfterStateHandlerInterface
+class RunControllerStateHandler implements MainEmptyStateHandlerInterface
 {
     public function __construct(
         private ContainerInterface $container,
@@ -30,7 +32,7 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
     ) {}
 
     #[Override]
-    public function handle(StateMainAfterService $stateService, StateContext $context): void
+    public function handle(StateMainEmptyService $stateService, StateContext $context): void
     {
         /** @var Controller $controllerData */
         $controllerData = $context->read('controller');
@@ -58,8 +60,6 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             }
         }
 
-        $arguments = $this->argumentBuilder->build($controllerData, $argumentsData);
-
         $this->container->bind(
             $controllerData->getBind(),
         );
@@ -68,18 +68,30 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
             $controllerData->getProviders(),
         );
 
-        $controller = is_callable($controllerData->handler)
-            ? $controllerData->handler
-            : $this->container->get($controllerData->handler);
-
-        if ($controller instanceof AbstractController) {
-            $controller->setRenderer($this->twigWrapper);
-        }
-
-        if ('__invoke' === $controllerData->getMethod()) {
-            $response = $controller(...$arguments);
+        if (is_callable($controllerData->handler)) {
+            $response = ($controllerData->handler)(
+                new Context(
+                    $this->twigWrapper,
+                    new BusService($stateService),
+                    $this->container,
+                    $argumentsData,
+                )
+            );
         } else {
-            $response = $controller->{$controllerData->getmethod()}(...$arguments);
+            $arguments = $this->argumentBuilder->build($controllerData, $argumentsData);
+
+            $controller = $this->container->get($controllerData->handler);
+
+            if ($controller instanceof BaseController) {
+                $controller->setRenderer($this->twigWrapper);
+                $controller->setBusService(new BusService($stateService));
+            }
+
+            if ('__invoke' === $controllerData->getMethod()) {
+                $response = $controller(...$arguments);
+            } else {
+                $response = $controller->{$controllerData->getMethod()}(...$arguments);
+            }
         }
 
         if (null === $response) {
@@ -100,11 +112,5 @@ class RunControllerStateHandler implements MainAfterStateHandlerInterface
                 data: $response,
             ),
         );
-    }
-
-    #[Override]
-    public function observed(StateContext $context): array
-    {
-        return $context->read('doActions') ?? [];
     }
 }

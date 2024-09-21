@@ -7,13 +7,13 @@ namespace Duyler\Web\Build\Attribute;
 use Closure;
 use Duyler\Builder\Build\AttributeHandlerInterface;
 use Duyler\Builder\Build\AttributeInterface;
-use Duyler\Web\Enum\Method;
+use Duyler\Web\Enum\HttpMethod;
 use Override;
 
 readonly class Route implements AttributeInterface
 {
     public function __construct(
-        public Method $method,
+        public HttpMethod $method,
         public string $pattern,
         public ?string $name = null,
         public string|Closure|null $handler = null,

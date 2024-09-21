@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Duyler\Web\State\Action;
 
-use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
+use Duyler\EventBus\Contract\State\MainEmptyStateHandlerInterface;
 use Duyler\EventBus\Dto\Event;
-use Duyler\EventBus\State\Service\StateMainAfterService;
+use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
 use Duyler\Http\Http;
 use Duyler\TwigWrapper\TwigWrapper;
@@ -18,7 +18,7 @@ use LogicException;
 use Override;
 use Psr\Http\Message\ResponseInterface;
 
-class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
+class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
 {
     public function __construct(
         private ViewCollection $viewCollection,
@@ -26,9 +26,13 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
     ) {}
 
     #[Override]
-    public function handle(StateMainAfterService $stateService, StateContext $context): void
+    public function handle(StateMainEmptyService $stateService, StateContext $context): void
     {
         $actionId = $context->read('actionId');
+
+        if (null === $actionId) {
+            return;
+        }
 
         if (false === $stateService->resultIsExists($actionId)) {
             throw new LogicException('Result is not exists for action ' . $actionId);
@@ -70,11 +74,5 @@ class ResultToResponseStateHandler implements MainAfterStateHandlerInterface
                 ),
             );
         }
-    }
-
-    #[Override]
-    public function observed(StateContext $context): array
-    {
-        return [$context->read('actionId') ?? ''];
     }
 }
