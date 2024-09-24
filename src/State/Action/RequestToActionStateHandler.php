@@ -7,7 +7,7 @@ namespace Duyler\Web\State\Action;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\Http;
+use Duyler\Http\Action\Route;
 use Duyler\Router\CurrentRoute;
 use Override;
 
@@ -36,6 +36,6 @@ class RequestToActionStateHandler implements MainAfterStateHandlerInterface
     #[Override]
     public function observed(StateContext $context): array
     {
-        return [Http::GetRoute];
+        return [Route::GetRoute];
     }
 }

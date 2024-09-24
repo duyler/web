@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Duyler\Web;
+namespace Duyler\Web\Controller;
 
 use Duyler\EventBus\Build\Event;
 use Duyler\EventBus\Dto\Event as EventDto;

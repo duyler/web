@@ -10,13 +10,13 @@ use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\Enum\ResultStatus;
 use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\Http;
-use Duyler\TwigWrapper\TwigWrapper;
-use Duyler\Web\BaseController;
+use Duyler\Http\Event\Response;
 use Duyler\Web\ArgumentBuilder;
 use Duyler\Web\Build\Controller;
-use Duyler\Web\BusService;
-use Duyler\Web\Context;
+use Duyler\Web\Controller\BaseController;
+use Duyler\Web\Controller\BusService;
+use Duyler\Web\Controller\Context;
+use Duyler\Web\Renderer\RendererInterface;
 use HttpSoft\Response\TextResponse;
 use InvalidArgumentException;
 use Override;
@@ -27,7 +27,7 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
 {
     public function __construct(
         private ContainerInterface $container,
-        private TwigWrapper $twigWrapper,
+        private RendererInterface $renderer,
         private ArgumentBuilder $argumentBuilder,
     ) {}
 
@@ -71,7 +71,7 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
         if (is_callable($controllerData->handler)) {
             $response = ($controllerData->handler)(
                 new Context(
-                    $this->twigWrapper,
+                    $this->renderer,
                     new BusService($stateService),
                     $this->container,
                     $argumentsData,
@@ -83,7 +83,7 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
             $controller = $this->container->get($controllerData->handler);
 
             if ($controller instanceof BaseController) {
-                $controller->setRenderer($this->twigWrapper);
+                $controller->setRenderer($this->renderer);
                 $controller->setBusService(new BusService($stateService));
             }
 
@@ -108,7 +108,7 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
 
         $stateService->dispatchEvent(
             new Event(
-                id: Http::CreateResponse,
+                id: Response::ResponseCreated,
                 data: $response,
             ),
         );

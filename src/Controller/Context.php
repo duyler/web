@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Duyler\Web;
+namespace Duyler\Web\Controller;
 
 use Closure;
 use Duyler\DependencyInjection\ContainerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\Dto\Result;
-use Duyler\TwigWrapper\TwigWrapper;
+use Duyler\Web\Renderer\RendererInterface;
 use HttpSoft\Response\HtmlResponse;
 use HttpSoft\Response\JsonResponse;
 use HttpSoft\Response\RedirectResponse;
@@ -21,7 +21,7 @@ use UnitEnum;
 final readonly class Context
 {
     public function __construct(
-        private TwigWrapper $twigWrapper,
+        private RendererInterface $renderer,
         private BusService $busService,
         private ContainerInterface $container,
         /** @var array<string, object> */
@@ -36,10 +36,10 @@ final readonly class Context
     public function render(string $template, array $data = []): ResponseInterface
     {
         $template = str_replace('.', DIRECTORY_SEPARATOR, $template);
-        if (false === $this->twigWrapper->exists($template)) {
+        if (false === $this->renderer->exists($template)) {
             throw new InvalidArgumentException('Template not found: ' . $template);
         }
-        $content = $this->twigWrapper->content($data)->render($template);
+        $content = $this->renderer->content($data)->render($template);
 
         return new HtmlResponse($content);
     }

@@ -8,8 +8,8 @@ use Duyler\EventBus\Contract\State\MainEmptyStateHandlerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\Http;
-use Duyler\TwigWrapper\TwigWrapper;
+use Duyler\Http\Event\Response;
+use Duyler\Web\Renderer\RendererInterface;
 use Duyler\Web\ViewCollection;
 use HttpSoft\Response\HtmlResponse;
 use HttpSoft\Response\JsonResponse;
@@ -22,7 +22,7 @@ class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
 {
     public function __construct(
         private ViewCollection $viewCollection,
-        private TwigWrapper $twigWrapper,
+        private RendererInterface $renderer,
     ) {}
 
     #[Override]
@@ -43,7 +43,7 @@ class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
         if ($responseData instanceof ResponseInterface) {
             $stateService->dispatchEvent(
                 new Event(
-                    id: Http::CreateResponse,
+                    id: Response::ResponseCreated,
                     data: $responseData,
                 ),
             );
@@ -51,25 +51,21 @@ class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
             $actionView = $this->viewCollection->get($actionId);
 
             $template = str_replace('.', DIRECTORY_SEPARATOR, $actionView->viewName);
-            if (false === $this->twigWrapper->exists($template)) {
+            if (false === $this->renderer->exists($template)) {
                 throw new InvalidArgumentException("Template {$template} not found");
             }
 
-            if (null !== $actionView->dataKey) {
-                $this->twigWrapper->content([$actionView->dataKey => $responseData]);
-            }
-
-            $content = $this->twigWrapper->render($template);
+            $content = $this->renderer->render($template);
             $stateService->dispatchEvent(
                 new Event(
-                    id: Http::CreateResponse,
+                    id: Response::ResponseCreated,
                     data: new HtmlResponse($content),
                 ),
             );
         } else {
             $stateService->dispatchEvent(
                 new Event(
-                    id: Http::CreateResponse,
+                    id: Response::ResponseCreated,
                     data: new JsonResponse($responseData),
                 ),
             );

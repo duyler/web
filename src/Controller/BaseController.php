@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Duyler\Web;
+namespace Duyler\Web\Controller;
 
 use Duyler\EventBus\Dto\Event as EventDto;
 use Duyler\EventBus\Dto\Result;
-use Duyler\TwigWrapper\TwigWrapper;
+use Duyler\Web\Renderer\RendererInterface;
 use HttpSoft\Response\HtmlResponse;
 use HttpSoft\Response\JsonResponse;
 use HttpSoft\Response\RedirectResponse;
@@ -16,13 +16,13 @@ use UnitEnum;
 
 abstract class BaseController
 {
-    private TwigWrapper $twigWrapper;
+    private RendererInterface $renderer;
     private BusService $busService;
 
     // TODO refactor to with RendererInterface
-    public function setRenderer(TwigWrapper $twigWrapper): void
+    public function setRenderer(RendererInterface $renderer): void
     {
-        $this->twigWrapper = $twigWrapper;
+        $this->renderer = $renderer;
     }
 
     public function setBusService(BusService $busService): void
@@ -33,10 +33,10 @@ abstract class BaseController
     protected function render(string $template, array $data = []): ResponseInterface
     {
         $template = str_replace('.', DIRECTORY_SEPARATOR, $template);
-        if (false === $this->twigWrapper->exists($template)) {
+        if (false === $this->renderer->exists($template)) {
             throw new InvalidArgumentException('Template not found: ' . $template);
         }
-        $content = $this->twigWrapper->content($data)->render($template);
+        $content = $this->renderer->content($data)->render($template);
 
         return new HtmlResponse($content);
     }
