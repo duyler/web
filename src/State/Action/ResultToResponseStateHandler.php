@@ -8,7 +8,7 @@ use Duyler\EventBus\Contract\State\MainEmptyStateHandlerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\State\Service\StateMainEmptyService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\Http;
+use Duyler\Http\Event\Response;
 use Duyler\TwigWrapper\TwigWrapper;
 use Duyler\Web\ViewCollection;
 use HttpSoft\Response\HtmlResponse;
@@ -43,7 +43,7 @@ class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
         if ($responseData instanceof ResponseInterface) {
             $stateService->dispatchEvent(
                 new Event(
-                    id: Http::CreateResponse,
+                    id: Response::ResponseCreated,
                     data: $responseData,
                 ),
             );
@@ -55,21 +55,17 @@ class ResultToResponseStateHandler implements MainEmptyStateHandlerInterface
                 throw new InvalidArgumentException("Template {$template} not found");
             }
 
-            if (null !== $actionView->dataKey) {
-                $this->twigWrapper->content([$actionView->dataKey => $responseData]);
-            }
-
             $content = $this->twigWrapper->render($template);
             $stateService->dispatchEvent(
                 new Event(
-                    id: Http::CreateResponse,
+                    id: Response::ResponseCreated,
                     data: new HtmlResponse($content),
                 ),
             );
         } else {
             $stateService->dispatchEvent(
                 new Event(
-                    id: Http::CreateResponse,
+                    id: Response::ResponseCreated,
                     data: new JsonResponse($responseData),
                 ),
             );
