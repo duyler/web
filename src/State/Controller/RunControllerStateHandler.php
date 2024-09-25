@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Duyler\Web\State\Controller;
 
-use Duyler\DependencyInjection\ContainerInterface;
+use Duyler\DI\ContainerInterface;
 use Duyler\EventBus\Contract\State\MainEmptyStateHandlerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\Enum\ResultStatus;
