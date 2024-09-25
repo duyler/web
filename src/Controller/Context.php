@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Duyler\Web\Controller;
 
 use Closure;
-use Duyler\DependencyInjection\ContainerInterface;
+use Duyler\DI\ContainerInterface;
 use Duyler\EventBus\Dto\Event;
 use Duyler\EventBus\Dto\Result;
 use Duyler\Web\Renderer\RendererInterface;
