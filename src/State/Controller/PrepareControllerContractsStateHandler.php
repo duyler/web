@@ -7,7 +7,7 @@ namespace Duyler\Web\State\Controller;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\Action\Route;
+use Duyler\Http\Action\Router;
 use Duyler\Router\CurrentRoute;
 use Duyler\Web\ControllerCollection;
 use Override;
@@ -50,6 +50,6 @@ class PrepareControllerContractsStateHandler implements MainAfterStateHandlerInt
     #[Override]
     public function observed(StateContext $context): array
     {
-        return [Route::GetRoute];
+        return [Router::GetRoute];
     }
 }

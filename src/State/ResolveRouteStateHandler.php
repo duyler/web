@@ -7,7 +7,7 @@ namespace Duyler\Web\State;
 use Duyler\EventBus\Contract\State\MainAfterStateHandlerInterface;
 use Duyler\EventBus\State\Service\StateMainAfterService;
 use Duyler\EventBus\State\StateContext;
-use Duyler\Http\Action\Route;
+use Duyler\Http\Action\Router;
 use Duyler\Http\Exception\NotFoundHttpException;
 use Duyler\Router\CurrentRoute;
 use Override;
@@ -28,6 +28,6 @@ class ResolveRouteStateHandler implements MainAfterStateHandlerInterface
     #[Override]
     public function observed(StateContext $context): array
     {
-        return [Route::GetRoute];
+        return [Router::GetRoute];
     }
 }
