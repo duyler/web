@@ -56,7 +56,7 @@ class RunControllerStateHandler implements MainEmptyStateHandlerInterface
 
             if (null !== $result->data) {
                 $action = $stateService->getById($actionId);
-                $argumentsData[$action->contract] = $result->data;
+                $argumentsData[$action->typeCollection ?? $action->type] = $result->data;
             }
         }
 
