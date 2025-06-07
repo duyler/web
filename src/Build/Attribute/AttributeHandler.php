@@ -6,6 +6,7 @@ namespace Duyler\Web\Build\Attribute;
 
 use Duyler\EventBus\Build\Action;
 use Duyler\Builder\Build\AttributeHandlerInterface;
+use Duyler\EventBus\Formatter\IdFormatter;
 use Duyler\Router\Route;
 use Duyler\Router\RouteDefinition;
 use Duyler\Web\ActionView;
@@ -45,13 +46,13 @@ class AttributeHandler implements AttributeHandlerInterface
 
         $definition->where($route->where);
 
-        $definition->target(
-            $item?->target
-                ?? $item?->id
-                ?? throw new InvalidArgumentException(
-                    'Target value for attribute "Route" not set',
-                ),
-        );
+        $target = $item?->target
+            ?? $item?->id
+            ?? throw new InvalidArgumentException(
+                'Target value for attribute "Route" not set',
+            );
+
+        $definition->target(IdFormatter::toString($target));
     }
 
     public function handleView(View $view, mixed $item): void
@@ -63,7 +64,7 @@ class AttributeHandler implements AttributeHandlerInterface
         }
 
         $this->viewCollection->add(new ActionView(
-            actionId: $item->id,
+            actionId: IdFormatter::toString($item->id),
             viewName: $view->name,
             dataKey: $view->key,
         ));
