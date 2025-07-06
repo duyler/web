@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Duyler\Web\Build;
 
 use Closure;
-use Duyler\EventBus\Formatter\IdFormatter;
 use Duyler\Builder\Build\AttributeInterface;
+use Duyler\EventBus\Formatter\IdFormatter;
 use UnitEnum;
 
 class Controller
