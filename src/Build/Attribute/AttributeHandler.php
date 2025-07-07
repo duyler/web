@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Duyler\Web\Build\Attribute;
 
-use Duyler\EventBus\Build\Action;
 use Duyler\Builder\Build\AttributeHandlerInterface;
+use Duyler\EventBus\Build\Action;
 use Duyler\EventBus\Formatter\IdFormatter;
 use Duyler\Router\Route;
 use Duyler\Router\RouteDefinition;

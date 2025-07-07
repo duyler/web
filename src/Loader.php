@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Duyler\Web;
 
-use Duyler\DI\ContainerInterface;
-use Duyler\EventBus\Build\Context;
 use Duyler\Builder\Loader\LoaderServiceInterface;
 use Duyler\Builder\Loader\PackageLoaderInterface;
+use Duyler\DI\ContainerInterface;
+use Duyler\EventBus\Build\Context;
 use Duyler\EventBus\Contract\State\StateHandlerInterface;
 use Duyler\Web\Build\Attribute\AttributeHandler;
 use Duyler\Web\Build\Controller;
@@ -35,7 +35,7 @@ class Loader implements PackageLoaderInterface
     }
 
     #[Override]
-    public function load(LoaderServiceInterface $loaderService): void
+    public function beforeLoadBuild(LoaderServiceInterface $loaderService): void
     {
         /** @var ControllerBuilder $controllerBuilder */
         $controllerBuilder = $this->container->get(ControllerBuilder::class);
@@ -83,5 +83,11 @@ class Loader implements PackageLoaderInterface
         $loaderService->addStateHandler($requestToAction);
         $loaderService->addStateHandler($resultToResponse);
         $loaderService->addStateHandler($resolveRoute);
+    }
+
+    #[Override]
+    public function afterLoadBuild(LoaderServiceInterface $loaderService): void
+    {
+        // No implementation needs
     }
 }
